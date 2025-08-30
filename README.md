@@ -1,3 +1,4 @@
+```markdown
 # 🦷 Dental X-Ray Classifier
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/downloads/)
@@ -91,3 +92,121 @@ python main.py
 
 # Make predictions
 python predict.py path/to/dental/image.jpg
+```
+
+## 🛠️ Installation
+
+### Prerequisites
+- Python 3.8 or higher
+- CUDA-capable GPU (recommended)
+- 8GB+ RAM
+- 10GB+ free disk space
+
+### Step 1: Clone Repository
+```bash
+git clone https://github.com/yourusername/dental-xray-classifier.git
+cd dental-xray-classifier
+```
+
+### Step 2: Create Virtual Environment
+```bash
+# Using venv
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Using conda
+conda create -n dental-classifier python=3.8
+conda activate dental-classifier
+```
+
+### Step 3: Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### Step 4: Download Dataset
+```bash
+# Download the dataset (if not already available)
+python scripts/download_dataset.py
+
+# Or manually place the dataset in the correct structure
+```
+
+## 📚 Usage
+
+### Training a New Model
+
+```python
+from pipeline import CompletePipeline
+
+# Initialize and run pipeline
+pipeline = CompletePipeline(config_path='configs/default_config.yaml')
+pipeline.run()
+```
+
+### Making Predictions
+
+```python
+from inference import DentalClassifier
+
+# Load trained model
+classifier = DentalClassifier('models/best_model.h5')
+
+# Single image prediction
+result = classifier.predict('path/to/dental/image.jpg')
+print(f"Prediction: {result['class']} (Confidence: {result['confidence']:.2%})")
+
+# Batch prediction
+results = classifier.predict_batch(['image1.jpg', 'image2.jpg', 'image3.jpg'])
+```
+
+### Custom Configuration
+
+```python
+# Create custom configuration
+config = {
+    'model': {
+        'backbone': 'efficientnetb0',
+        'input_shape': (224, 224, 3),
+        'num_classes': 7
+    },
+    'training': {
+        'batch_size': 32,
+        'initial_epochs': 10,
+        'fine_tune_epochs': 10,
+        'initial_lr': 0.0001,
+        'fine_tune_lr': 0.00001
+    }
+}
+
+# Run with custom config
+pipeline = CompletePipeline(config=config)
+pipeline.run()
+```
+
+## 📁 Dataset Structure
+
+```
+data/
+└── teeth-dataset/
+    ├── Training/
+    │   ├── CaS/
+    │   │   ├── image1.jpg
+    │   │   └── ...
+    │   ├── CoS/
+    │   ├── Gum/
+    │   ├── MC/
+    │   ├── OC/
+    │   ├── OLP/
+    │   └── OT/
+    ├── Validation/
+    │   └── [same structure as Training]
+    └── Testing/
+        └── [same structure as Training]
+```
+
+### Dataset Requirements
+- Image formats: JPG, PNG, JPEG
+- Recommended resolution: 224x224 pixels or higher
+- Minimum 100 images per class for training
+- Balanced distribution across classes recommended
